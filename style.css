@@ -1,0 +1,36 @@
+.in_bearbeitung {
+  border: 0.5em solid palegreen;
+  background-color: palegreen;
+  border-radius: 0.5em;
+  margin: 0.5em;
+}
+
+.angenommen {
+  border: 0.5em solid coral;
+  background-color: coral;
+  border-radius: 0.5em;
+  margin: 0.5em;
+}
+
+.fruehtermin {
+  background-color: palegreen;
+}
+
+.mittagstermin {
+  background-color: khaki;
+}
+
+.spaettermin {
+  background-color: lightsalmon;
+}
+
+.leercontainer {
+  background-color: paleturquoise;
+}
+
+a span {
+  display: inline-block;
+  width: 2em;
+  padding: 0 0.5em;
+  text-align: center;
+}
