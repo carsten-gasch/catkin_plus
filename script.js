@@ -3,6 +3,7 @@ let counter = {
   morningContainers: 0,
   middayContainers: 0,
   lateContainers: 0,
+  zeroTimes: 0,
 };
 
 const COUNTER = 0;
@@ -44,10 +45,21 @@ function processLines() {
       styleEarlyDate(e);
       styleMiddleDate(e);
       styleLateDate(e);
+
+      removeZeroTime(e);
+      console.log("00:00 => " + counter.zeroTimes);
     });
   });
 
   injectStatistics();
+}
+
+function removeZeroTime(e) {
+  const re = /\d{2}\.\d{2}.\d{4}\s00:00<br>\s/gi;
+  if (e.innerHTML.includes("00:00<br>")) {
+    counter.zeroTimes++;
+    e.innerHTML = e.innerHTML.replace(re, "");
+  }
 }
 
 function styleEmptyContainer(e) {
