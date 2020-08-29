@@ -3,6 +3,7 @@ let counter = {
   morningContainers: 0,
   middayContainers: 0,
   lateContainers: 0,
+  zeroTimes: 0,
 };
 
 const COUNTER = 0;
@@ -44,10 +45,21 @@ function processLines() {
       styleEarlyDate(e);
       styleMiddleDate(e);
       styleLateDate(e);
+
+      removeZeroTime(e);
+      console.log("00:00 => " + counter.zeroTimes);
     });
   });
 
   injectStatistics();
+}
+
+function removeZeroTime(e) {
+  const re = /\d{2}\.\d{2}.\d{4}\s00:00<br>\s/gi;
+  if (e.innerHTML.includes("00:00<br>")) {
+    counter.zeroTimes++;
+    e.innerHTML = e.innerHTML.replace(re, "");
+  }
 }
 
 function styleEmptyContainer(e) {
@@ -58,40 +70,28 @@ function styleEmptyContainer(e) {
 }
 
 function styleEarlyDate(e) {
-  if (
-    e.innerHTML.includes("05:") ||
-    e.innerHTML.includes("06:") ||
-    e.innerHTML.includes("07:") ||
-    e.innerHTML.includes("08:") ||
-    e.innerHTML.includes("09:")
-  ) {
+  const re = /0[5-9]:\d\d/gi;
+  if (re.test(e.innerHTML)) {
     e.parentElement.firstChild.classList.add("fruehtermin");
     counter.morningContainers++;
   }
 }
 
 function styleMiddleDate(e) {
-  if (e.innerHTML.includes("10:") || e.innerHTML.includes("11:")) {
+  const re = /1[01]:\d\d/gi;
+  if (re.test(e.innerHTML)) {
     e.parentElement.firstChild.classList.add("mittagstermin");
     counter.middayContainers++;
   }
 }
 
 function styleLateDate(e) {
+  const re = /1[2-9]:\d\d/gi;
   if (e.innerHTML.includes("16:58") || e.innerHTML.includes("18:28")) {
     return;
   }
 
-  if (
-    e.innerHTML.includes("12:") ||
-    e.innerHTML.includes("13:") ||
-    e.innerHTML.includes("14:") ||
-    e.innerHTML.includes("15:") ||
-    e.innerHTML.includes("16:") ||
-    e.innerHTML.includes("17:") ||
-    e.innerHTML.includes("18:") ||
-    e.innerHTML.includes("19:")
-  ) {
+  if (re.test(e.innerHTML)) {
     e.parentElement.firstChild.classList.add("spaettermin");
     counter.lateContainers++;
   }
