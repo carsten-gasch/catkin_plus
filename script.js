@@ -22,6 +22,7 @@ const CONTAINER_LENGTH = 20;
 const CONTAINER_WEIGHT = 21;
 const CONTAINER_NUMBER = 22;
 
+insertTodayButton();
 processLines();
 
 //offene und vergebene Aufträge markieren
@@ -123,4 +124,46 @@ function injectStatistics() {
   let elemStats = document.createElement("li");
   elemStats.innerHTML = stats;
   document.getElementsByClassName("submenu-reverse")[0].appendChild(elemStats);
+}
+
+function insertTodayButton() {
+  const day = addLeadingZero(new Date().getDate());
+  const month = addLeadingZero(new Date().getMonth()+1);
+  const year = new Date().getFullYear();
+
+  const inputFromDate = document.getElementById(
+    "UserSettings.DateFromStrings_Date"
+  );
+  const inputFromTime = document.getElementById(
+    "UserSettings.DateFromStrings_Time"
+  );
+  const inputToDate = document.getElementById(
+    "UserSettings.DateTillStrings_Date"
+  );
+  const inputToTime = document.getElementById(
+    "UserSettings.DateTillStrings_Time"
+  );
+  const formElement = document.querySelector(
+    'form[action="/Home/UpdateUserSettings"]'
+  );
+  const insertBefore = document.querySelector(
+    'input[value="Ansicht aktualisieren"]'
+  );
+
+  const btnToday = document.createElement("button");
+  btnToday.innerText = "heute";
+  btnToday.addEventListener("click", () => {
+    inputFromDate.value = year + "-" + month + "-" + day;
+    inputFromTime.value = "00:01";
+    inputToDate.value = year + "-" + month + "-" + day;
+    inputToTime.value = "23:59";
+
+    formElement.submit();
+  });
+  insertBefore.parentElement.appendChild(btnToday);
+}
+
+function addLeadingZero(number) {
+  if (number < 10) return "0" + number;
+  else return number;
 }
