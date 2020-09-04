@@ -6,23 +6,25 @@ let counter = {
   zeroTimes: 0,
 };
 
-const COUNTER = 0;
-const STATUS = 1;
-const IMP_EXP = 5;
-const CUSTOMS = 6;
-const DANGEROUS_GOODS = 7;
-const WASTE = 8;
-const IK_REFERENCE = 9;
-const PICKUP_LOCATION = 11;
-const CUSTOMER = 13;
-const DEADLINE = 15;
-const RETURN_LOCATION = 17;
-const CONTAINER_TYPE = 19;
-const CONTAINER_LENGTH = 20;
-const CONTAINER_WEIGHT = 21;
-const CONTAINER_NUMBER = 22;
+const COLUMN_INDEXES = {
+  COUNTER: 0,
+  STATUS: 1,
+  IMP_EXP: 5,
+  CUSTOMS: 6,
+  DANGEROUS_GOODS: 7,
+  WASTE: 8,
+  IK_REFERENCE: 9,
+  PICKUP_LOCATION: 11,
+  CUSTOMER: 13,
+  DEADLINE: 15,
+  RETURN_LOCATION: 17,
+  CONTAINER_TYPE: 19,
+  CONTAINER_LENGTH: 20,
+  CONTAINER_WEIGHT: 21,
+  CONTAINER_NUMBER: 22,
+};
 
-insertTodayButton();
+insertDateButtons();
 processLines();
 
 //offene und vergebene Aufträge markieren
@@ -125,10 +127,15 @@ function injectStatistics() {
   document.getElementsByClassName("submenu-reverse")[0].appendChild(elemStats);
 }
 
-function insertTodayButton() {
-  const day = addLeadingZero(new Date().getDate());
-  const month = addLeadingZero(new Date().getMonth()+1);
+function getCurrentDate() {
+  const day = addLeadingZeroToNumber(new Date().getDate());
+  const month = addLeadingZeroToNumber(new Date().getMonth() + 1);
   const year = new Date().getFullYear();
+  return { year: year, month: month, day: day };
+}
+
+function insertYesterdayButton() {
+  let today = getCurrentDate();
 
   const inputFromDate = document.getElementById(
     "UserSettings.DateFromStrings_Date"
@@ -145,24 +152,152 @@ function insertTodayButton() {
   const formElement = document.querySelector(
     'form[action="/Home/UpdateUserSettings"]'
   );
-  const insertBefore = document.querySelector(
-    'input[value="Ansicht aktualisieren"]'
+
+  const btnYesterday = document.createElement("button");
+  btnYesterday.innerHTML = "&larr;";
+  btnYesterday.title = "zeige letzten Tag";
+  btnYesterday.addEventListener("click", () => {
+    /*
+    inputFromDate.value = today.year + "-" + today.month + "-" + today.day;
+    inputFromTime.value = "00:01";
+    inputToDate.value = today.year + "-" + today.month + "-" + today.day;
+    inputToTime.value = "23:59";
+
+    formElement.submit();
+    */
+    console.info("not yet implemented");
+  });
+  return btnYesterday;
+}
+
+function insertTodayButton() {
+  const today = getCurrentDate();
+
+  const inputFromDate = document.getElementById(
+    "UserSettings.DateFromStrings_Date"
+  );
+  const inputFromTime = document.getElementById(
+    "UserSettings.DateFromStrings_Time"
+  );
+  const inputToDate = document.getElementById(
+    "UserSettings.DateTillStrings_Date"
+  );
+  const inputToTime = document.getElementById(
+    "UserSettings.DateTillStrings_Time"
+  );
+  const formElement = document.querySelector(
+    'form[action="/Home/UpdateUserSettings"]'
   );
 
   const btnToday = document.createElement("button");
-  btnToday.innerText = "heute";
+  btnToday.innerHTML = "&uarr;";
+  btnToday.title = "zeige heutigen Tag";
   btnToday.addEventListener("click", () => {
-    inputFromDate.value = year + "-" + month + "-" + day;
+    inputFromDate.value = today.year + "-" + today.month + "-" + today.day;
     inputFromTime.value = "00:01";
-    inputToDate.value = year + "-" + month + "-" + day;
+    inputToDate.value = today.year + "-" + today.month + "-" + today.day;
     inputToTime.value = "23:59";
 
     formElement.submit();
   });
-  insertBefore.parentElement.appendChild(btnToday);
+  return btnToday;
 }
 
-function addLeadingZero(number) {
+function insertTomorrowButton() {
+  let today = getCurrentDate();
+
+  const inputFromDate = document.getElementById(
+    "UserSettings.DateFromStrings_Date"
+  );
+  const inputFromTime = document.getElementById(
+    "UserSettings.DateFromStrings_Time"
+  );
+  const inputToDate = document.getElementById(
+    "UserSettings.DateTillStrings_Date"
+  );
+  const inputToTime = document.getElementById(
+    "UserSettings.DateTillStrings_Time"
+  );
+  const formElement = document.querySelector(
+    'form[action="/Home/UpdateUserSettings"]'
+  );
+
+  const btnTomorrow = document.createElement("button");
+  btnTomorrow.innerHTML = "&rarr;";
+  btnTomorrow.title = "zeige morgigen Tag";
+  btnTomorrow.addEventListener("click", () => {
+    /*
+    inputFromDate.value = today.year + "-" + today.month + "-" + today.day;
+    inputFromTime.value = "00:01";
+    inputToDate.value = today.year + "-" + today.month + "-" + today.day;
+    inputToTime.value = "23:59";
+
+    formElement.submit();
+    */
+
+    console.info("not yet implemented");
+  });
+  return btnTomorrow;
+}
+
+function insertThisWeekButton() {
+  let today = getCurrentDate();
+
+  const inputFromDate = document.getElementById(
+    "UserSettings.DateFromStrings_Date"
+  );
+  const inputFromTime = document.getElementById(
+    "UserSettings.DateFromStrings_Time"
+  );
+  const inputToDate = document.getElementById(
+    "UserSettings.DateTillStrings_Date"
+  );
+  const inputToTime = document.getElementById(
+    "UserSettings.DateTillStrings_Time"
+  );
+  const formElement = document.querySelector(
+    'form[action="/Home/UpdateUserSettings"]'
+  );
+
+  const btnThisWeek = document.createElement("button");
+  btnThisWeek.innerHTML = "&harr;";
+  btnThisWeek.title = "zeige aktuelle Woche";
+  btnThisWeek.addEventListener("click", () => {
+    /*
+    inputFromDate.value = today.year + "-" + today.month + "-" + today.day;
+    inputFromTime.value = "00:01";
+    inputToDate.value = today.year + "-" + today.month + "-" + today.day;
+    inputToTime.value = "23:59";
+
+    formElement.submit();
+    */
+
+    console.info("not yet implemented");
+  });
+  return btnThisWeek;
+}
+
+function addLeadingZeroToNumber(number) {
   if (number < 10) return "0" + number;
   else return number;
+}
+
+function insertDateButtons() {
+  const insertIntoElement = document.querySelector(
+    'input[value="Ansicht aktualisieren"]'
+  );
+
+  const btnYesterday = insertYesterdayButton();
+  const btnToday = insertTodayButton();
+  const btnTomorrow = insertTomorrowButton();
+  const btnWeek = insertThisWeekButton();
+
+  const container = document.createElement("div");
+  container.id = "quickDate";
+  container.appendChild(btnYesterday);
+  container.appendChild(btnToday);
+  container.appendChild(btnTomorrow);
+  container.appendChild(btnWeek);
+
+  insertIntoElement.parentElement.appendChild(container);
 }
