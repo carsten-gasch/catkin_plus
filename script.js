@@ -48,7 +48,6 @@ function processLines() {
       styleLateDate(e);
 
       removeZeroTime(e);
-      console.log("00:00 => " + counter.zeroTimes);
     });
   });
 
