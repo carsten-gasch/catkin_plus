@@ -34,3 +34,13 @@ a span {
   padding: 0 0.5em;
   text-align: center;
 }
+
+#quickDate{
+  display: flex;
+  justify-content: flex-end;
+}
+
+#quickDate > button{
+  width: 2.5em;
+  text-align: center;
+}
