@@ -1,3 +1,8 @@
+const HOURS_PER_DAY = 24;
+const MINUTES_PER_DAY = HOURS_PER_DAY * 60;
+const SECONDS_PER_DAY = MINUTES_PER_DAY * 60;
+const MILLISECONDS_PER_DAY = SECONDS_PER_DAY * 1000;
+
 let counter = {
   emptyContainers: 0,
   morningContainers: 0,
@@ -24,24 +29,37 @@ const COLUMN_INDEXES = {
   CONTAINER_NUMBER: 22,
 };
 
+const SELECTORS = {
+  TOUR_DONE: 'img[title="In Bearbeitung"]',
+  TOUR_OPEN: 'img[title="Angenommen"]',
+  DATA: "#disptable>tbody",
+  STATS_POS: "submenu-reverse",
+  DATE_FROM: "UserSettings.DateFromStrings_Date",
+  TIME_FROM: "UserSettings.DateFromStrings_Time",
+  DATE_TO: "UserSettings.DateTillStrings_Date",
+  TIME_TO: "UserSettings.DateTillStrings_Time",
+  FORM_DATE: 'form[action="/Home/UpdateUserSettings"]',
+  QUICKDATE_POS: 'input[value="Ansicht aktualisieren"]',
+};
+
 insertDateButtons();
 processLines();
 
 //offene und vergebene Aufträge markieren
-document.querySelectorAll('img[title="In Bearbeitung"]').forEach((e) => {
+document.querySelectorAll(SELECTORS.TOUR_DONE).forEach((e) => {
   e.parentElement.parentElement.parentElement.parentElement.classList.add(
     "in_bearbeitung"
   );
 });
 
-document.querySelectorAll('img[title="Angenommen"]').forEach((e) => {
+document.querySelectorAll(SELECTORS.TOUR_OPEN).forEach((e) => {
   e.parentElement.parentElement.parentElement.parentElement.classList.add(
     "angenommen"
   );
 });
 
 function processLines() {
-  let rows = document.querySelectorAll("#disptable>tbody")[0].children;
+  let rows = document.querySelectorAll(SELECTORS.DATA)[0].children;
   [...rows].forEach((row) => {
     [...row.children].forEach((e) => {
       styleEmptyContainer(e);
@@ -124,7 +142,9 @@ function injectStatistics() {
 
   let elemStats = document.createElement("li");
   elemStats.innerHTML = stats;
-  document.getElementsByClassName("submenu-reverse")[0].appendChild(elemStats);
+  document
+    .getElementsByClassName(SELECTORS.STATS_POS)[0]
+    .appendChild(elemStats);
 }
 
 function getCurrentDate() {
@@ -135,145 +155,34 @@ function getCurrentDate() {
 }
 
 function insertYesterdayButton() {
-  let today = getCurrentDate();
-
-  const inputFromDate = document.getElementById(
-    "UserSettings.DateFromStrings_Date"
-  );
-  const inputFromTime = document.getElementById(
-    "UserSettings.DateFromStrings_Time"
-  );
-  const inputToDate = document.getElementById(
-    "UserSettings.DateTillStrings_Date"
-  );
-  const inputToTime = document.getElementById(
-    "UserSettings.DateTillStrings_Time"
-  );
-  const formElement = document.querySelector(
-    'form[action="/Home/UpdateUserSettings"]'
-  );
-
   const btnYesterday = document.createElement("button");
   btnYesterday.innerHTML = "&larr;";
   btnYesterday.title = "zeige letzten Tag";
-  btnYesterday.addEventListener("click", () => {
-    /*
-    inputFromDate.value = today.year + "-" + today.month + "-" + today.day;
-    inputFromTime.value = "00:01";
-    inputToDate.value = today.year + "-" + today.month + "-" + today.day;
-    inputToTime.value = "23:59";
-
-    formElement.submit();
-    */
-    console.info("not yet implemented");
-  });
+  btnYesterday.addEventListener("click", decrementDate);
   return btnYesterday;
 }
 
 function insertTodayButton() {
-  const today = getCurrentDate();
-
-  const inputFromDate = document.getElementById(
-    "UserSettings.DateFromStrings_Date"
-  );
-  const inputFromTime = document.getElementById(
-    "UserSettings.DateFromStrings_Time"
-  );
-  const inputToDate = document.getElementById(
-    "UserSettings.DateTillStrings_Date"
-  );
-  const inputToTime = document.getElementById(
-    "UserSettings.DateTillStrings_Time"
-  );
-  const formElement = document.querySelector(
-    'form[action="/Home/UpdateUserSettings"]'
-  );
-
   const btnToday = document.createElement("button");
   btnToday.innerHTML = "&uarr;";
   btnToday.title = "zeige heutigen Tag";
-  btnToday.addEventListener("click", () => {
-    inputFromDate.value = today.year + "-" + today.month + "-" + today.day;
-    inputFromTime.value = "00:01";
-    inputToDate.value = today.year + "-" + today.month + "-" + today.day;
-    inputToTime.value = "23:59";
-
-    formElement.submit();
-  });
+  btnToday.addEventListener("click", setCurrentDate);
   return btnToday;
 }
 
 function insertTomorrowButton() {
-  let today = getCurrentDate();
-
-  const inputFromDate = document.getElementById(
-    "UserSettings.DateFromStrings_Date"
-  );
-  const inputFromTime = document.getElementById(
-    "UserSettings.DateFromStrings_Time"
-  );
-  const inputToDate = document.getElementById(
-    "UserSettings.DateTillStrings_Date"
-  );
-  const inputToTime = document.getElementById(
-    "UserSettings.DateTillStrings_Time"
-  );
-  const formElement = document.querySelector(
-    'form[action="/Home/UpdateUserSettings"]'
-  );
-
   const btnTomorrow = document.createElement("button");
   btnTomorrow.innerHTML = "&rarr;";
   btnTomorrow.title = "zeige morgigen Tag";
-  btnTomorrow.addEventListener("click", () => {
-    /*
-    inputFromDate.value = today.year + "-" + today.month + "-" + today.day;
-    inputFromTime.value = "00:01";
-    inputToDate.value = today.year + "-" + today.month + "-" + today.day;
-    inputToTime.value = "23:59";
-
-    formElement.submit();
-    */
-
-    console.info("not yet implemented");
-  });
+  btnTomorrow.addEventListener("click", incrementDate);
   return btnTomorrow;
 }
 
 function insertThisWeekButton() {
-  let today = getCurrentDate();
-
-  const inputFromDate = document.getElementById(
-    "UserSettings.DateFromStrings_Date"
-  );
-  const inputFromTime = document.getElementById(
-    "UserSettings.DateFromStrings_Time"
-  );
-  const inputToDate = document.getElementById(
-    "UserSettings.DateTillStrings_Date"
-  );
-  const inputToTime = document.getElementById(
-    "UserSettings.DateTillStrings_Time"
-  );
-  const formElement = document.querySelector(
-    'form[action="/Home/UpdateUserSettings"]'
-  );
-
   const btnThisWeek = document.createElement("button");
   btnThisWeek.innerHTML = "&harr;";
   btnThisWeek.title = "zeige aktuelle Woche";
-  btnThisWeek.addEventListener("click", () => {
-    /*
-    inputFromDate.value = today.year + "-" + today.month + "-" + today.day;
-    inputFromTime.value = "00:01";
-    inputToDate.value = today.year + "-" + today.month + "-" + today.day;
-    inputToTime.value = "23:59";
-
-    formElement.submit();
-    */
-
-    console.info("not yet implemented");
-  });
+  btnThisWeek.addEventListener("click", setCurrentWeek);
   return btnThisWeek;
 }
 
@@ -283,9 +192,7 @@ function addLeadingZeroToNumber(number) {
 }
 
 function insertDateButtons() {
-  const insertIntoElement = document.querySelector(
-    'input[value="Ansicht aktualisieren"]'
-  );
+  const insertIntoElement = document.querySelector(SELECTORS.QUICKDATE_POS);
 
   const btnYesterday = insertYesterdayButton();
   const btnToday = insertTodayButton();
@@ -300,4 +207,87 @@ function insertDateButtons() {
   container.appendChild(btnWeek);
 
   insertIntoElement.parentElement.appendChild(container);
+}
+
+function setCurrentWeek() {
+  const inDateFrom = document.getElementById(SELECTORS.DATE_FROM);
+  const inDateTo = document.getElementById(SELECTORS.DATE_TO);
+  const monday = getMonday();
+  const friday = getFriday();
+  inDateFrom.value = getStringFromDate(monday);
+  inDateTo.value = getStringFromDate(friday);
+}
+
+function getMonday() {
+  let date = new Date();
+  while (date.getDay() != 1) {
+    date = new Date(date.getTime() - MILLISECONDS_PER_DAY);
+  }
+  return date;
+}
+
+function getFriday() {
+  let date = new Date();
+  if (date.getDay() == 6) date = new Date(date - MILLISECONDS_PER_DAY);
+  if (date.getDay() == 0) date = new Date(date - 2 * MILLISECONDS_PER_DAY);
+  while (date.getDay() != 5) {
+    date = new Date(date.getTime() + MILLISECONDS_PER_DAY);
+  }
+  return date;
+}
+
+function setCurrentDate() {
+  const inDateFrom = document.getElementById(SELECTORS.DATE_FROM);
+  const inDateTo = document.getElementById(SELECTORS.DATE_TO);
+
+  const date = new Date();
+  inDateFrom.value = getStringFromDate(date);
+  inDateTo.value = inDateFrom.value;
+}
+
+function decrementDate() {
+  const inDateFrom = document.getElementById(SELECTORS.DATE_FROM);
+  const inDateTo = document.getElementById(SELECTORS.DATE_TO);
+
+  const date = new Date(inDateFrom.value);
+  let new_date = new Date(date.getTime() - MILLISECONDS_PER_DAY);
+  while (!isWorkday(new_date)) {
+    new_date = new Date(new_date.getTime() - MILLISECONDS_PER_DAY);
+  }
+  inDateFrom.value = getStringFromDate(new_date);
+  inDateTo.value = inDateFrom.value;
+}
+
+function incrementDate() {
+  const inDateFrom = document.getElementById(SELECTORS.DATE_FROM);
+  const inDateTo = document.getElementById(SELECTORS.DATE_TO);
+
+  const date = new Date(inDateFrom.value);
+  let new_date = new Date(date.getTime() + MILLISECONDS_PER_DAY);
+  while (!isWorkday(new_date)) {
+    new_date = new Date(new_date.getTime() + MILLISECONDS_PER_DAY);
+  }
+  inDateFrom.value = getStringFromDate(new_date);
+  inDateTo.value = inDateFrom.value;
+}
+
+function getStringFromDate(date) {
+  let ret = date.getFullYear();
+  ret += "-";
+  ret += addLeadingZero(date.getMonth() + 1);
+  ret += "-";
+  ret += addLeadingZero(date.getDate());
+
+  return ret;
+}
+
+function addLeadingZero(number) {
+  if (number < 10) return "0" + number;
+  else return new String(number);
+}
+
+function isWorkday(date) {
+  const day = date.getDay();
+  if (day == 0 || day == 6) return false;
+  else return true;
 }
