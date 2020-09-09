@@ -40,25 +40,45 @@ const SELECTORS = {
   TIME_TO: "UserSettings.DateTillStrings_Time",
   FORM_DATE: 'form[action="/Home/UpdateUserSettings"]',
   QUICKDATE_POS: 'input[value="Ansicht aktualisieren"]',
+  SEARCH_KEYWORD: "SearchKeyword",
+  SEARCH_BUTTON: 'input[value="Suchen"]',
 };
 
+insertClearSearchButton();
 insertDateButtons();
 processLines();
 
-//offene und vergebene Aufträge markieren
-document.querySelectorAll(SELECTORS.TOUR_DONE).forEach((e) => {
-  e.parentElement.parentElement.parentElement.parentElement.classList.add(
-    "in_bearbeitung"
-  );
-});
-
-document.querySelectorAll(SELECTORS.TOUR_OPEN).forEach((e) => {
-  e.parentElement.parentElement.parentElement.parentElement.classList.add(
-    "angenommen"
-  );
-});
+function insertClearSearchButton() {
+  const clearSearchButton = document.createElement("button");
+  clearSearchButton.innerHTML = "&cross;";
+  clearSearchButton.title = "Suche löschen";
+  clearSearchButton.classList.add("btn");
+  clearSearchButton.classList.add("btn-success");
+  clearSearchButton.classList.add("btn-sm");
+  clearSearchButton.style.backgroundColor = "red";
+  clearSearchButton.style.borderColor = "red";
+  clearSearchButton.addEventListener("click", () => {
+    document.getElementById(SELECTORS.SEARCH_KEYWORD).value = "";
+    document.querySelector(SELECTORS.SEARCH_BUTTON).click();
+  });
+  document
+    .querySelector(SELECTORS.SEARCH_BUTTON)
+    .parentElement.appendChild(clearSearchButton);
+}
 
 function processLines() {
+  //offene und vergebene Aufträge markieren
+  document.querySelectorAll(SELECTORS.TOUR_DONE).forEach((e) => {
+    e.parentElement.parentElement.parentElement.parentElement.classList.add(
+      "in_bearbeitung"
+    );
+  });
+
+  document.querySelectorAll(SELECTORS.TOUR_OPEN).forEach((e) => {
+    e.parentElement.parentElement.parentElement.parentElement.classList.add(
+      "angenommen"
+    );
+  });
   let rows = document.querySelectorAll(SELECTORS.DATA)[0].children;
   [...rows].forEach((row) => {
     [...row.children].forEach((e) => {
