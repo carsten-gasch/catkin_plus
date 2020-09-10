@@ -46,7 +46,24 @@ const SELECTORS = {
 
 insertClearSearchButton();
 insertDateButtons();
+setTitleToFilter();
 processLines();
+
+function setTitleToFilter() {
+  const fromDate = toShortDate(
+    document.getElementById(SELECTORS.DATE_FROM).value
+  );
+  const toDate = toShortDate(document.getElementById(SELECTORS.DATE_TO).value);
+  const searchString = document.getElementById(SELECTORS.SEARCH_KEYWORD).value;
+  let filter = searchString.length == 0 ? "" : " > " + searchString;
+  let newTitle = `${fromDate} bis ${toDate}${filter}`;
+  document.title = newTitle;
+}
+
+function toShortDate(date) {
+  let [year, month, day] = date.split("-");
+  return `${day}.${month}.`;
+}
 
 function insertClearSearchButton() {
   const clearSearchButton = document.createElement("button");
