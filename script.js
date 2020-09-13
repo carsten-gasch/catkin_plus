@@ -55,14 +55,12 @@ function setTitleToFilter() {
   );
   const toDate = toShortDate(document.getElementById(SELECTORS.DATE_TO).value);
   const searchString = document.getElementById(SELECTORS.SEARCH_KEYWORD).value;
-  let filter = searchString.length == 0 ? "" : " > " + searchString;
+  let filter = "";
+  if (searchString.length > 0) {
+    filter += " > " + searchString;
+  }
   let newTitle = `${fromDate} bis ${toDate}${filter}`;
   document.title = newTitle;
-}
-
-function toShortDate(date) {
-  let [year, month, day] = date.split("-");
-  return `${day}.${month}.`;
 }
 
 function insertClearSearchButton() {
@@ -223,11 +221,6 @@ function insertThisWeekButton() {
   return btnThisWeek;
 }
 
-function addLeadingZeroToNumber(number) {
-  if (number < 10) return "0" + number;
-  else return number;
-}
-
 function insertDateButtons() {
   const insertIntoElement = document.querySelector(SELECTORS.QUICKDATE_POS);
 
@@ -244,33 +237,6 @@ function insertDateButtons() {
   container.appendChild(btnWeek);
 
   insertIntoElement.parentElement.appendChild(container);
-}
-
-function setCurrentWeek() {
-  const inDateFrom = document.getElementById(SELECTORS.DATE_FROM);
-  const inDateTo = document.getElementById(SELECTORS.DATE_TO);
-  const monday = getMonday();
-  const friday = getFriday();
-  inDateFrom.value = getStringFromDate(monday);
-  inDateTo.value = getStringFromDate(friday);
-}
-
-function getMonday() {
-  let date = new Date();
-  while (date.getDay() != 1) {
-    date = new Date(date.getTime() - MILLISECONDS_PER_DAY);
-  }
-  return date;
-}
-
-function getFriday() {
-  let date = new Date();
-  if (date.getDay() == 6) date = new Date(date - MILLISECONDS_PER_DAY);
-  if (date.getDay() == 0) date = new Date(date - 2 * MILLISECONDS_PER_DAY);
-  while (date.getDay() != 5) {
-    date = new Date(date.getTime() + MILLISECONDS_PER_DAY);
-  }
-  return date;
 }
 
 function setCurrentDate() {
@@ -308,6 +274,15 @@ function incrementDate() {
   inDateTo.value = inDateFrom.value;
 }
 
+function setCurrentWeek() {
+  const inDateFrom = document.getElementById(SELECTORS.DATE_FROM);
+  const inDateTo = document.getElementById(SELECTORS.DATE_TO);
+  const monday = getMonday();
+  const friday = getFriday();
+  inDateFrom.value = getStringFromDate(monday);
+  inDateTo.value = getStringFromDate(friday);
+}
+
 function getStringFromDate(date) {
   let ret = date.getFullYear();
   ret += "-";
@@ -323,8 +298,36 @@ function addLeadingZero(number) {
   else return new String(number);
 }
 
+function addLeadingZeroToNumber(number) {
+  if (number < 10) return "0" + number;
+  else return number;
+}
+
 function isWorkday(date) {
   const day = date.getDay();
   if (day == 0 || day == 6) return false;
   else return true;
+}
+
+function getMonday() {
+  let date = new Date();
+  while (date.getDay() != 1) {
+    date = new Date(date.getTime() - MILLISECONDS_PER_DAY);
+  }
+  return date;
+}
+
+function getFriday() {
+  let date = new Date();
+  if (date.getDay() == 6) date = new Date(date - MILLISECONDS_PER_DAY);
+  if (date.getDay() == 0) date = new Date(date - 2 * MILLISECONDS_PER_DAY);
+  while (date.getDay() != 5) {
+    date = new Date(date.getTime() + MILLISECONDS_PER_DAY);
+  }
+  return date;
+}
+
+function toShortDate(date) {
+  let [year, month, day] = date.split("-");
+  return `${day}.${month}.`;
 }
