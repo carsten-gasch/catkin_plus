@@ -1,30 +1,30 @@
-.in_bearbeitung {
+.tour_in_progress {
   border: 0.5em solid palegreen;
   background-color: palegreen;
   border-radius: 0.5em;
   margin: 0.5em;
 }
 
-.angenommen {
+.tour_todo {
   border: 0.5em solid coral;
   background-color: coral;
   border-radius: 0.5em;
   margin: 0.5em;
 }
 
-.fruehtermin {
+.tour_early {
   background-color: palegreen;
 }
 
-.mittagstermin {
+.tour_middle {
   background-color: khaki;
 }
 
-.spaettermin {
+.tour_late {
   background-color: lightsalmon;
 }
 
-.leercontainer {
+.container_empty {
   background-color: paleturquoise;
 }
 
