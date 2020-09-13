@@ -87,13 +87,13 @@ function processLines() {
   //offene und vergebene Aufträge markieren
   document.querySelectorAll(SELECTORS.TOUR_DONE).forEach((e) => {
     e.parentElement.parentElement.parentElement.parentElement.classList.add(
-      "in_bearbeitung"
+      "tour_in_progress"
     );
   });
 
   document.querySelectorAll(SELECTORS.TOUR_OPEN).forEach((e) => {
     e.parentElement.parentElement.parentElement.parentElement.classList.add(
-      "angenommen"
+      "tour_todo"
     );
   });
   let rows = document.querySelectorAll(SELECTORS.DATA)[0].children;
@@ -121,7 +121,7 @@ function removeZeroTime(e) {
 
 function styleEmptyContainer(e) {
   if (e.innerHTML.includes("<span>\nLE")) {
-    e.parentElement.firstChild.classList.add("leercontainer");
+    e.parentElement.firstChild.classList.add("container_empty");
     counter.emptyContainers++;
   }
 }
@@ -129,7 +129,7 @@ function styleEmptyContainer(e) {
 function styleEarlyDate(e) {
   const re = /0[5-9]:\d\d/gi;
   if (re.test(e.innerHTML)) {
-    e.parentElement.firstChild.classList.add("fruehtermin");
+    e.parentElement.firstChild.classList.add("tour_early");
     counter.morningContainers++;
   }
 }
@@ -137,7 +137,7 @@ function styleEarlyDate(e) {
 function styleMiddleDate(e) {
   const re = /1[01]:\d\d/gi;
   if (re.test(e.innerHTML)) {
-    e.parentElement.firstChild.classList.add("mittagstermin");
+    e.parentElement.firstChild.classList.add("tour_middle");
     counter.middayContainers++;
   }
 }
@@ -149,20 +149,20 @@ function styleLateDate(e) {
   }
 
   if (re.test(e.innerHTML)) {
-    e.parentElement.firstChild.classList.add("spaettermin");
+    e.parentElement.firstChild.classList.add("tour_late");
     counter.lateContainers++;
   }
 }
 
 function injectStatistics() {
   let stats = '<a href="#">';
-  stats += '<span class="fruehtermin">';
+  stats += '<span class="tour_early">';
   stats += counter.morningContainers;
   stats += "</span>";
-  stats += '<span class="mittagstermin">';
+  stats += '<span class="tour_middle">';
   stats += counter.middayContainers;
   stats += "</span>";
-  stats += '<span class="spaettermin">';
+  stats += '<span class="tour_late">';
   stats += counter.lateContainers;
   stats += "</span>";
   stats += "&sum;";
@@ -172,7 +172,7 @@ function injectStatistics() {
     counter.middayContainers +
     counter.lateContainers;
   stats += "</span>";
-  stats += '<span class="leercontainer">';
+  stats += '<span class="container_empty">';
   stats += counter.emptyContainers;
   stats += "</span>";
   stats += "</a>";
