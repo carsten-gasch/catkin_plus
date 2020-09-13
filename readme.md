@@ -32,6 +32,9 @@ Die Erweiterung soll Catkin optisch so aufbereiten, dass man dennoch halbwegs ve
 #### 0.3.1
 - Update der readme
 
+#### 0.3.2
+- unify language => change CSS-Classes to english
+
 ## Ideen für zukünftige Versionen
 
 - Optionen
