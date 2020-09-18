@@ -183,8 +183,8 @@ function injectStatistics() {
 }
 
 function getCurrentDate() {
-  const day = addLeadingZeroToNumber(new Date().getDate());
-  const month = addLeadingZeroToNumber(new Date().getMonth() + 1);
+  const day = addLeadingZero(new Date().getDate());
+  const month = addLeadingZero(new Date().getMonth() + 1);
   const year = new Date().getFullYear();
   return { year: year, month: month, day: day };
 }
@@ -296,11 +296,6 @@ function getStringFromDate(date) {
 function addLeadingZero(number) {
   if (number < 10) return "0" + number;
   else return new String(number);
-}
-
-function addLeadingZeroToNumber(number) {
-  if (number < 10) return "0" + number;
-  else return number;
 }
 
 function isWorkday(date) {
