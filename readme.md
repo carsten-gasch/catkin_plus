@@ -26,14 +26,21 @@ Die Erweiterung soll Catkin optisch so aufbereiten, dass man dennoch halbwegs ve
   - nächster Tag ("morgen" oder Montag, wenn aktuell Freitag ist)
 
 ### 0.3.0 Schnellfilter
+
 - aktuelles Filterdatum und -suchwort wird im Titel angezeigt
 - Schaltfläche um die Suche zu leeren
 
 #### 0.3.1
+
 - Update der readme
 
 #### 0.3.2
+
 - unify language => change CSS-Classes to english
+
+#### 0.3.3
+
+- button for resetting dates and times
 
 ## Ideen für zukünftige Versionen
 

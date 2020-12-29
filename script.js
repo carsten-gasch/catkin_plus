@@ -45,6 +45,7 @@ const SELECTORS = {
 };
 
 insertClearSearchButton();
+insertClearDateAndTimeButton();
 insertDateButtons();
 setTitleToFilter();
 processLines();
@@ -61,6 +62,26 @@ function setTitleToFilter() {
   }
   let newTitle = `${fromDate} bis ${toDate}${filter}`;
   document.title = newTitle;
+}
+
+function insertClearDateAndTimeButton() {
+  const clearDateAndTimeButton = document.createElement("button");
+  clearDateAndTimeButton.innerHTML = "&cross;";
+  clearDateAndTimeButton.title = "Tag und zeit löschen";
+  clearDateAndTimeButton.classList.add("btn");
+  clearDateAndTimeButton.classList.add("btn-success");
+  clearDateAndTimeButton.classList.add("btn-sm");
+  clearDateAndTimeButton.style.backgroundColor = "red";
+  clearDateAndTimeButton.style.borderColor = "red";
+  clearDateAndTimeButton.addEventListener("click", () => {
+    document.getElementById(SELECTORS.DATE_FROM).value = "";
+    document.getElementById(SELECTORS.TIME_FROM).value = "";
+    document.getElementById(SELECTORS.DATE_TO).value = "";
+    document.getElementById(SELECTORS.TIME_TO).value = "";
+    return false;
+  });
+  document
+    .getElementById(SELECTORS.TIME_TO).parentElement.appendChild(clearDateAndTimeButton);
 }
 
 function insertClearSearchButton() {
