@@ -1,61 +1,47 @@
-const HOURS_PER_DAY = 24;
-const MINUTES_PER_DAY = HOURS_PER_DAY * 60;
-const SECONDS_PER_DAY = MINUTES_PER_DAY * 60;
-const MILLISECONDS_PER_DAY = SECONDS_PER_DAY * 1000;
-
 let counter = {
   emptyContainers: 0,
+  earlyContainers: 0,
   morningContainers: 0,
-  middayContainers: 0,
-  lateContainers: 0,
+  afternoonContainers: 0,
+  eveningContainers: 0,
   zeroTimes: 0,
 };
 
-const COLUMN_INDEXES = {
-  COUNTER: 0,
-  STATUS: 1,
-  IMP_EXP: 5,
-  CUSTOMS: 6,
-  DANGEROUS_GOODS: 7,
-  WASTE: 8,
-  IK_REFERENCE: 9,
-  PICKUP_LOCATION: 11,
-  CUSTOMER: 13,
-  DEADLINE: 15,
-  RETURN_LOCATION: 17,
-  CONTAINER_TYPE: 19,
-  CONTAINER_LENGTH: 20,
-  CONTAINER_WEIGHT: 21,
-  CONTAINER_NUMBER: 22,
-};
+const currentTerminal = document
+  .querySelector(SELECTORS.SELECTED_TERMINAL)
+  .innerText.match(new RegExp(REGEXES.TERMINAL, "gi"))[0];
 
-const SELECTORS = {
-  TOUR_DONE: 'img[title="In Bearbeitung"]',
-  TOUR_OPEN: 'img[title="Angenommen"]',
-  DATA: "#disptable>tbody",
-  STATS_POS: "submenu-reverse",
-  DATE_FROM: "UserSettings.DateFromStrings_Date",
-  TIME_FROM: "UserSettings.DateFromStrings_Time",
-  DATE_TO: "UserSettings.DateTillStrings_Date",
-  TIME_TO: "UserSettings.DateTillStrings_Time",
-  FORM_DATE: 'form[action="/Home/UpdateUserSettings"]',
-  QUICKDATE_POS: 'input[value="Ansicht aktualisieren"]',
-  SEARCH_KEYWORD: "SearchKeyword",
-  SEARCH_BUTTON: 'input[value="Suchen"]',
-};
+// Terminal specific stuff
+switch (currentTerminal) {
+  case "Leipzig":
+    addCheckboxes();
+    break;
+  default:
+    break;
+}
 
+//let the magic happen
 insertClearSearchButton();
 insertClearDateAndTimeButton();
 insertDateButtons();
 setTitleToFilter();
 processLines();
 
+function addCheckboxes() {
+  let counters = document.querySelectorAll(".css-increment");
+  counters.forEach((e) => {
+    let cb = document.createElement("input");
+    cb.type = "checkbox";
+    e.appendChild(cb);
+  });
+}
+
 function setTitleToFilter() {
   const fromDate = toShortDate(
     document.getElementById(SELECTORS.DATE_FROM).value
   );
   const toDate = toShortDate(document.getElementById(SELECTORS.DATE_TO).value);
-  const searchString = document.getElementById(SELECTORS.SEARCH_KEYWORD).value;
+  const searchString = document.querySelector(SELECTORS.SEARCH_KEYWORD).value;
   let filter = "";
   if (searchString.length > 0) {
     filter += " > " + searchString;
@@ -81,7 +67,8 @@ function insertClearDateAndTimeButton() {
     return false;
   });
   document
-    .getElementById(SELECTORS.TIME_TO).parentElement.appendChild(clearDateAndTimeButton);
+    .getElementById(SELECTORS.TIME_TO)
+    .parentElement.appendChild(clearDateAndTimeButton);
 }
 
 function insertClearSearchButton() {
@@ -94,7 +81,7 @@ function insertClearSearchButton() {
   clearSearchButton.style.backgroundColor = "red";
   clearSearchButton.style.borderColor = "red";
   clearSearchButton.addEventListener("click", () => {
-    document.getElementById(SELECTORS.SEARCH_KEYWORD).value = "";
+    document.querySelector(SELECTORS.SEARCH_KEYWORD).value = "";
     document.querySelector(SELECTORS.SEARCH_BUTTON).click();
   });
   document
@@ -106,24 +93,25 @@ function processLines() {
   //offene und vergebene Aufträge markieren
   document.querySelectorAll(SELECTORS.TOUR_DONE).forEach((e) => {
     e.parentElement.parentElement.parentElement.parentElement.classList.add(
-      "tour_in_progress"
+      "tour_in_process"
     );
   });
 
   document.querySelectorAll(SELECTORS.TOUR_OPEN).forEach((e) => {
     e.parentElement.parentElement.parentElement.parentElement.classList.add(
-      "tour_todo"
+      "tour_confirmed"
     );
   });
-  let rows = document.querySelectorAll(SELECTORS.DATA)[0].children;
+  let rows = document.querySelector(SELECTORS.DATA).children;
   [...rows].forEach((row) => {
     [...row.children].forEach((e) => {
       styleEmptyContainer(e);
       styleEarlyDate(e);
-      styleMiddleDate(e);
-      styleLateDate(e);
+      styleMorningDate(e);
+      styleAfternoonDate(e);
+      styleEveningDate(e);
 
-      removeZeroTime(e);
+      //removeZeroTime(e);
     });
   });
 
@@ -131,81 +119,99 @@ function processLines() {
 }
 
 function removeZeroTime(e) {
-  const re = /\d{2}\.\d{2}.\d{4}\s00:00<br>\s/gi;
   if (e.innerHTML.includes("00:00<br>")) {
     counter.zeroTimes++;
-    e.innerHTML = e.innerHTML.replace(re, "");
+    e.innerHTML = e.innerHTML.replace(new RegExp(REGEXES.TIME_ZERO, "gi"), "");
   }
 }
 
 function styleEmptyContainer(e) {
-  if (e.innerHTML.includes("<span>\nLE")) {
+  if (new RegExp(REGEXES.EMPTY_CONTAINER, "gi").test(e.innerHTML)) {
     e.parentElement.firstChild.classList.add("container_empty");
     counter.emptyContainers++;
   }
 }
 
 function styleEarlyDate(e) {
-  const re = /0[5-9]:\d\d/gi;
-  if (re.test(e.innerHTML)) {
+  if (new RegExp(REGEXES.APPOINTMENT_EARLY, "gi").test(e.innerHTML)) {
     e.parentElement.firstChild.classList.add("tour_early");
+    counter.earlyContainers++;
+  }
+}
+
+function styleMorningDate(e) {
+  if (new RegExp(REGEXES.APPOINTMENT_MORNING, "gi").test(e.innerHTML)) {
+    e.parentElement.firstChild.classList.add("tour_morning");
     counter.morningContainers++;
   }
 }
 
-function styleMiddleDate(e) {
-  const re = /1[01]:\d\d/gi;
-  if (re.test(e.innerHTML)) {
-    e.parentElement.firstChild.classList.add("tour_middle");
-    counter.middayContainers++;
+function styleAfternoonDate(e) {
+  if (new RegExp(REGEXES.APPOINTMENT_AFTERNOON, "gi").test(e.innerHTML)) {
+    e.parentElement.firstChild.classList.add("tour_afternoon");
+    counter.afternoonContainers++;
   }
 }
 
-function styleLateDate(e) {
-  const re = /1[2-9]:\d\d/gi;
-  if (e.innerHTML.includes("16:58") || e.innerHTML.includes("18:28")) {
-    return;
-  }
-
-  if (re.test(e.innerHTML)) {
-    e.parentElement.firstChild.classList.add("tour_late");
-    counter.lateContainers++;
+function styleEveningDate(e) {
+  if (new RegExp(REGEXES.APPOINTMENT_EVENING, "gi").test(e.innerHTML)) {
+    e.parentElement.firstChild.classList.add("tour_evening");
+    counter.eveningContainers++;
   }
 }
 
 function injectStatistics() {
-  let stats = '<a href="#">';
-  stats += '<span class="tour_early">';
-  stats += counter.morningContainers;
-  stats += "</span>";
-  stats += '<span class="tour_middle">';
-  stats += counter.middayContainers;
-  stats += "</span>";
-  stats += '<span class="tour_late">';
-  stats += counter.lateContainers;
-  stats += "</span>";
-  stats += "&sum;";
-  stats += "<span>";
-  stats +=
-    counter.morningContainers +
-    counter.middayContainers +
-    counter.lateContainers;
-  stats += "</span>";
-  stats += '<span class="container_empty">';
-  stats += counter.emptyContainers;
-  stats += "</span>";
-  stats += "</a>";
+  const a = document.createElement("a");
+  a.href = "";
 
-  let elemStats = document.createElement("li");
-  elemStats.innerHTML = stats;
+  const early = document.createElement("span");
+  early.classList.add("tour_early");
+  early.innerText = counter.earlyContainers;
+
+  const morning = document.createElement("span");
+  morning.classList.add("tour_morning");
+  morning.innerText = counter.morningContainers;
+
+  const afternoon = document.createElement("span");
+  afternoon.classList.add("tour_afternoon");
+  afternoon.innerText = counter.afternoonContainers;
+
+  const evening = document.createElement("span");
+  evening.classList.add("tour_evening");
+  evening.innerText = counter.eveningContainers;
+
+  const sumSign = document.createElement("span");
+  sumSign.innerHTML = "&sum;";
+
+  const sum = document.createElement("span");
+  sum.innerHTML =
+    counter.earlyContainers +
+    counter.morningContainers +
+    counter.afternoonContainers +
+    counter.eveningContainers;
+
+  const empty = document.createElement("span");
+  empty.classList.add("container_empty");
+  empty.innerText = counter.emptyContainers;
+
+  a.appendChild(early);
+  a.appendChild(morning);
+  a.appendChild(afternoon);
+  a.appendChild(evening);
+  a.appendChild(sumSign);
+  a.appendChild(sum);
+  a.appendChild(empty);
+
+  const elemStats = document.createElement("li");
+  elemStats.appendChild(a);
   document
-    .getElementsByClassName(SELECTORS.STATS_POS)[0]
+    .querySelector(SELECTORS.STATS_POS)
     .appendChild(elemStats);
 }
 
 function getCurrentDate() {
-  const day = addLeadingZeroToNumber(new Date().getDate());
-  const month = addLeadingZeroToNumber(new Date().getMonth() + 1);
+  const day = new String(addLeadingZero(new Date().getDate()));
+  const month = new String(addLeadingZero(new Date().getMonth() + 1));
   const year = new Date().getFullYear();
   return { year: year, month: month, day: day };
 }
@@ -261,17 +267,14 @@ function insertDateButtons() {
 }
 
 function setCurrentDate() {
-  const inDateFrom = document.getElementById(SELECTORS.DATE_FROM);
-  const inDateTo = document.getElementById(SELECTORS.DATE_TO);
-
   const date = new Date();
   inDateFrom.value = getStringFromDate(date);
   inDateTo.value = inDateFrom.value;
+  inTimeFrom.value="00:00";
+  inTimeTo.value="23:59";
 }
 
 function decrementDate() {
-  const inDateFrom = document.getElementById(SELECTORS.DATE_FROM);
-  const inDateTo = document.getElementById(SELECTORS.DATE_TO);
 
   const date = new Date(inDateFrom.value);
   let new_date = new Date(date.getTime() - MILLISECONDS_PER_DAY);
@@ -283,9 +286,6 @@ function decrementDate() {
 }
 
 function incrementDate() {
-  const inDateFrom = document.getElementById(SELECTORS.DATE_FROM);
-  const inDateTo = document.getElementById(SELECTORS.DATE_TO);
-
   const date = new Date(inDateFrom.value);
   let new_date = new Date(date.getTime() + MILLISECONDS_PER_DAY);
   while (!isWorkday(new_date)) {
@@ -296,8 +296,6 @@ function incrementDate() {
 }
 
 function setCurrentWeek() {
-  const inDateFrom = document.getElementById(SELECTORS.DATE_FROM);
-  const inDateTo = document.getElementById(SELECTORS.DATE_TO);
   const monday = getMonday();
   const friday = getFriday();
   inDateFrom.value = getStringFromDate(monday);
@@ -317,11 +315,6 @@ function getStringFromDate(date) {
 function addLeadingZero(number) {
   if (number < 10) return "0" + number;
   else return new String(number);
-}
-
-function addLeadingZeroToNumber(number) {
-  if (number < 10) return "0" + number;
-  else return number;
 }
 
 function isWorkday(date) {

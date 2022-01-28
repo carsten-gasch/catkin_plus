@@ -1,11 +1,11 @@
-.tour_in_progress {
+.tour_in_process {
   border: 0.5em solid palegreen;
   background-color: palegreen;
   border-radius: 0.5em;
   margin: 0.5em;
 }
 
-.tour_todo {
+.tour_confirmed {
   border: 0.5em solid coral;
   background-color: coral;
   border-radius: 0.5em;
@@ -16,12 +16,16 @@
   background-color: palegreen;
 }
 
-.tour_middle {
+.tour_morning {
   background-color: khaki;
 }
 
-.tour_late {
-  background-color: lightsalmon;
+.tour_afternoon{
+    background-color: gold;
+}
+
+.tour_evening {
+  background-color: tomato;
 }
 
 .container_empty {
