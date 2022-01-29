@@ -1,3 +1,15 @@
+function parseHTMLTableElem(tableEl) {
+  const columns = Array.from(tableEl.querySelectorAll('th')).map(it => it.textContent)
+  const rows = tableEl.querySelectorAll('tbody > tr')
+  return Array.from(rows).map(row => {
+      const cells = Array.from(row.querySelectorAll('td'))
+      return columns.reduce((obj, col, idx) => {
+          obj[col] = cells[idx].textContent
+          return obj
+      }, {})
+  })
+}
+
 let counter = {
   emptyContainers: 0,
   earlyContainers: 0,
